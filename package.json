@@ -1,7 +1,8 @@
 {
   "scripts": {},
   "dependencies": {
-    "mongodb": "^3.0.5"
+    "mongodb": "^3.0.5",
+    "micro": "^9.1.4"
   },
   "devDependencies": {
     "eslint": "^4.11.0",
