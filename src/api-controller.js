@@ -32,7 +32,8 @@ class ApiController {
     let response = {}
 
     switch (command) {
-      // case '':
+      case 'addFilm':
+        return this.addFilm(message.data)
       case 'exit':
         response.status = 0
         response.message = 'ok'
@@ -40,6 +41,31 @@ class ApiController {
         break
       default:
         response = ApiController.apiError(`Unknown command: ${command}`)
+    }
+
+    return response
+  }
+
+  async addFilm (data) {
+    let response = {}
+
+    if (
+      void 0 === data ||
+      typeof data.name !== 'string' ||
+      isNaN(data.priority)
+    ) {
+      response = ApiController.apiError('Validation failed.')
+    } else {
+      const insertionResult = await this.db.addFilm(data.name, data.priority)
+
+      if (insertionResult) {
+        response = {
+          status: 0,
+          message: 'successfully add film'
+        }
+      } else {
+        response = ApiController.apiError('cannot add film, read logs for more info')
+      }
     }
 
     return response
