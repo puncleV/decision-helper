@@ -9,6 +9,7 @@ class DbHelper {
 
   async initialize () {
     let status = true
+
     try {
       this.client = await MongoClient.connect(this.config.url)
       this.db = this.client.db(this.config.name)

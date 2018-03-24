@@ -27,7 +27,7 @@ class ApiController {
     }
   }
 
-  queryHandler (message) {
+  async queryHandler (message) {
     const command = message.command
     let response = {}
 
@@ -39,6 +39,9 @@ class ApiController {
       case 'exit':
         response.status = 0
         response.message = 'ok'
+
+        await this.db.close()
+
         setTimeout(() => { process.exit(0) }, 500)
         break
       default:
