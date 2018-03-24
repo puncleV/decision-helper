@@ -36,6 +36,8 @@ class ApiController {
         return this.addToWatch(message.data, 'film')
       case 'addSeries':
         return this.addToWatch(message.data, 'tvSeries')
+      case 'addParticipant':
+        return this.addParticipant(message.data)
       case 'exit':
         response.status = 0
         response.message = 'ok'
@@ -56,12 +58,13 @@ class ApiController {
 
     if (
       void 0 === data ||
-      typeof data.name !== 'string' ||
+      typeof data.name !== 'string' || data.name.length === 0 ||
+      typeof data.wantedBy !== 'string' || data.wantedBy.length === 0 ||
       isNaN(data.priority)
     ) {
       response = ApiController.apiError('Validation failed.')
     } else {
-      const insertionResult = await this.db.addToWatch(data.name, data.priority, type)
+      const insertionResult = await this.db.addToWatch(data.name, data.priority, data.wantedBy, type)
 
       if (insertionResult) {
         response = {
@@ -70,6 +73,30 @@ class ApiController {
         }
       } else {
         response = ApiController.apiError(`cannot add ${type}, read logs for more info`)
+      }
+    }
+
+    return response
+  }
+
+  async addParticipant (data) {
+    let response = {}
+
+    if (
+      void 0 === data ||
+      typeof data.name !== 'string'
+    ) {
+      response = ApiController.apiError('Validation failed.')
+    } else {
+      const insertionResult = await this.db.addParticipant(data.name)
+
+      if (insertionResult) {
+        response = {
+          status: 0,
+          message: `successfully add ${data.name}`
+        }
+      } else {
+        response = ApiController.apiError(`cannot add ${data.name}, read logs for more info`)
       }
     }
 

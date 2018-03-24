@@ -14,6 +14,7 @@ class DbHelper {
       this.client = await MongoClient.connect(this.config.url)
       this.db = this.client.db(this.config.name)
       this.toWatch = this.db.collection('toWatch')
+      this.participants = this.db.collection('participants')
     } catch (e) {
       console.error(e.message)
       status = false
@@ -22,7 +23,7 @@ class DbHelper {
     return status
   }
 
-  async addToWatch (name, priority, type) {
+  async addToWatch (name, priority, wantedBy, type) {
     let status = true
 
     try {
@@ -30,7 +31,29 @@ class DbHelper {
         name,
         priority,
         done: false,
+        wantedBy,
         type
+      })
+    } catch (e) {
+      console.error(e.message)
+      status = false
+    }
+
+    return status
+  }
+
+  async addParticipant (name) {
+    let status = true
+
+    const participantsCount = await this.participants.count()
+    const newOdds = ~~(100 / (participantsCount + 1))
+
+    this.participants.updateMany({}, {$set: {odds: newOdds}})
+
+    try {
+      await this.participants.insertOne({
+        name,
+        odds: newOdds
       })
     } catch (e) {
       console.error(e.message)
