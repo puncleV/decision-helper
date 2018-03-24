@@ -32,6 +32,8 @@ class ApiController {
     let response = {}
 
     switch (command) {
+      case 'getToday':
+        return this.getToday()
       case 'addFilm':
         return this.addToWatch(message.data, 'film')
       case 'addSeries':
@@ -101,6 +103,10 @@ class ApiController {
     }
 
     return response
+  }
+
+  getToday () {
+    return this.db.getToday()
   }
 }
 
