@@ -33,7 +33,9 @@ class ApiController {
 
     switch (command) {
       case 'addFilm':
-        return this.addFilm(message.data)
+        return this.addToWatch(message.data, 'film')
+      case 'addSeries':
+        return this.addToWatch(message.data, 'tvSeries')
       case 'exit':
         response.status = 0
         response.message = 'ok'
@@ -46,7 +48,7 @@ class ApiController {
     return response
   }
 
-  async addFilm (data) {
+  async addToWatch (data, type) {
     let response = {}
 
     if (
@@ -56,15 +58,15 @@ class ApiController {
     ) {
       response = ApiController.apiError('Validation failed.')
     } else {
-      const insertionResult = await this.db.addFilm(data.name, data.priority)
+      const insertionResult = await this.db.addToWatch(data.name, data.priority, type)
 
       if (insertionResult) {
         response = {
           status: 0,
-          message: 'successfully add film'
+          message: `successfully add ${type}`
         }
       } else {
-        response = ApiController.apiError('cannot add film, read logs for more info')
+        response = ApiController.apiError(`cannot add ${type}, read logs for more info`)
       }
     }
 
